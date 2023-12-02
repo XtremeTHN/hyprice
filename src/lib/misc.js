@@ -1,5 +1,8 @@
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import AgsWindow from 'resource:///com/github/Aylur/ags/widgets/window.js';
+import App from 'resource:///com/github/Aylur/ags/app.js';
+import GObject from 'gi://GObject';
 
 export const truncateWindowName = (str, len) => {
     if (str.length > len)
@@ -37,13 +40,67 @@ export const truncateTitle = (str) => {
     return str.substring(0, lastDash);
 }
 
-export const dispatch = w => {
-    Utils.execAsync(`hyprctl dispatch workspace ${w}`)
-}
-
-export const Box = (elements, className="", vertical=false, spacing=10) => Widget.Box({
+export const Box = (elements=[], className="", vertical=false, spacing=10) => Widget.Box({
     spacing: spacing,
     vertical: vertical,
     class_name: className,
     children: elements,
 })
+
+export const Separator = (vertical) => {
+    return Widget.Box({vexpand: vertical, hexpand: vertical ? false : true})
+}
+
+class PopupWindow2 extends AgsWindow {
+    static { GObject.registerClass(this); }
+
+    /** @param {import('types/widgets/window').WindowProps & {
+     *      name: string
+     *      child: import('types/widgets/box').default
+     *      transition?: import('types/widgets/revealer').RevealerProps['transition']
+     *  }} o
+     */
+    constructor({ name, child, transition = 'none', visible = false, ...rest }) {
+        super({
+            ...rest,
+            name,
+            popup: true,
+            focusable: true,
+            class_names: ['popup-window', name],
+        });
+
+        child.toggleClassName('window-content');
+        this.revealer = Widget.Revealer({
+            transition,
+            child,
+            transitionDuration: 1000,
+            connections: [[App, (_, wname, visible) => {
+                if (wname === name)
+                    this.revealer.reveal_child = visible;
+            }]],
+        });
+
+        this.child = Widget.Box({
+            css: 'padding: 1px;',
+            child: this.revealer,
+        });
+
+        this.show_all();
+        this.visible = visible;
+    }
+
+    set transition(dir) { this.revealer.transition = dir; }
+    get transition() { return this.revealer.transition; }
+}
+
+
+
+/** @param {import('types/widgets/window').WindowProps & {
+ *      name: string
+ *      child: import('types/widgets/box').default
+ *      transition?: import('types/widgets/revealer').RevealerProps['transition']
+ *  }} config
+ */
+export const PopupWindow = (config) => {
+    return new PopupWindow2(config)
+}

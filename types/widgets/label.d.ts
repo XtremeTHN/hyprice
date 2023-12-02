@@ -70,6 +70,7 @@ declare const AgsLabel_base: {
         vexpand_set: boolean;
         visible: boolean;
         width_request: number;
+        xalign: number;
         readonly window: import("@girs/gdk-3.0").Gdk.Window;
         parent_instance: import("@girs/gobject-2.0").GObject.InitiallyUnowned;
         activate(): boolean;

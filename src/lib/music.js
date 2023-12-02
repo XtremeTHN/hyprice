@@ -137,12 +137,20 @@ export const Music = () => {
         // box.child: Widget.Box
         // box.child.children: 
         box.child.toggleClassName("hover", true)
-        box.child.children[0].children[1].toggleClassName("hover", true)
+        box.child.children[1].toggleClassName("hover", true)
+
     }
     box.on_hover_lost = () => {
         box.child.toggleClassName("hover", false)
-        box.child.children[0].children[1].toggleClassName("hover", false)
+        box.child.children[1].toggleClassName("hover", false)
     }
     return box
 
 }
+
+
+export const MusicController = () => Widget.Window({
+    name: "musiccontroller-window",
+    class_name: "musiccontroller-window",
+    child: MusicCtl
+})

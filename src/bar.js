@@ -1,14 +1,15 @@
 import { Widget } from "resource:///com/github/Aylur/ags/widget.js";
-import { Separator } from "./lib/separator.js";
 import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
-import { truncateWindowName, truncateTitle, dispatch, Box } from "./lib/misc.js";
-import { Music } from "./lib/music_ctl.js";
+import { truncateWindowName, truncateTitle, Box, Separator } from "./lib/misc.js";
+import { Music } from "./lib/music.js";
 // @ts-ignore
-import { BatteryIndicator } from "./lib/battery.js";
-import { Clock } from "./lib/clock.js";
+import BatteryIndicator from "./lib/battery.js";
+import { Clock } from "./lib/variables.js";
 import { AudioIndicator } from "./lib/audio.js";
 import { NetworkIndicator } from "./lib/network.js";
-import { BluetoothIndicator } from "./lib/bluetooth.js";
+import BluetoothIndicator from "./lib/bluetooth.js";
+
+import { Dispatch } from './lib/hyprland.js';
 
 const WindowTitle = () => Widget.Box({
     class_name: "topbar-windowtitle",
@@ -45,7 +46,7 @@ const Workspaces = () => Widget.Box({
         setup: btn => btn.id = i,
         child: Widget.Box({class_name:"topbar-workspaces-button-circle"}),
         // @ts-ignore
-        onClicked: () => dispatch(i),
+        onClicked: () => Dispatch(i),
     })),
     connections: [
         [Hyprland, self => self.children.forEach(btn => {
