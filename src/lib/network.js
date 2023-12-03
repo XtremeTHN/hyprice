@@ -56,6 +56,9 @@ const NetworkButton = () => {
                     children: [
                         NetworkIcon(),
                         Widget.Label({
+                            binds: [
+                                ["label", net_obj, prop]
+                            ],
                             connections: [
                                 [net_obj, self => {
                                     self.label = net_obj[prop]

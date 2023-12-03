@@ -17,8 +17,7 @@ export var config = {
 }
 
 export const UserName = () => {
-    let user = User()
-    user = user.charAt(0).toUpperCase() + user.slice(1)
+    let user = User.charAt(0).toUpperCase() + User.slice(1)
 
     return Widget.Label({
         class_name: "dashboard-control-center-user",
@@ -101,7 +100,7 @@ export const QuickSettings = () => Widget.Box({
 export const LeftDashBoard = () => PopupWindow({
     name: "dashboard-left",
     child: Center(),
-    margins: [0,10,0,5],
+    margins: [0,10,5,5],
     anchor: ['left', 'top', 'bottom'],
     transition: "slide_right"
 })
@@ -114,5 +113,5 @@ export const RightDashBoard = () => PopupWindow({
     child: Box([
         QuickSettings(),
     ], "dashboard-control-center-box", true, 20),
-    transition: "slide_up",
+    transition: "slide_down",
 })

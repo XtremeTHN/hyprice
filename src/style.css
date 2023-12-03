@@ -216,11 +216,33 @@ button:active {
 
 .notification-center-box {
     min-height: 300px;
-    background-color: rgba(19,22,28,0.91);
+    background-color: rgb(19,22,28);
     /* background-color: #13161c; */
 
     border-radius: 16px;
     padding: 15px;
+}
+
+.dashboard-notification-center-system-usage-label {
+    font-size: x-small;
+}
+
+.dashboard-notification-center-cpu-usage trough progress {
+    background-color: #FBDF90;
+}
+
+.dashboard-notification-center-ram-usage trough progress {
+    background-color: #A7BDFB;
+}
+
+.dashboard-notification-center-box {
+    background-color: transparent;
+}
+
+.dashboard-notification-center-box-usage {
+    background-color: rgb(19,22,28);
+    padding: 10px;
+    border-radius: 16px;
 }
 
 .separator {
@@ -234,10 +256,10 @@ button:active {
 }
 
 .dashboard-control-center {
-    background-color: rgba(19,22,28,0.91);
+    background-color: rgb(19,22,28);
     border-radius: 16px;
     min-width: 300px;
-    padding: 10px;
+    padding: 15px;
 }
 
 .dashboard-control-center-box {
@@ -285,4 +307,13 @@ button:active {
 .dashboard-app-mixer-title {
     font-size: large;
     font-weight: 800;
+}
+
+progress, trough {
+    border-radius: 10px;
+    min-height: 10px;
+}
+
+progress, trough highlight {
+    border-radius: 10px;
 }

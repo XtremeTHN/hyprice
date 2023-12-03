@@ -12,7 +12,7 @@ import Mpris from 'resource:///com/github/Aylur/ags/service/mpris.js';
 globalThis['IncreaseAudio'] = IncreaseAudio
 globalThis['DecreaseAudio'] = DecreaseAudio
 
-globalThis['Mpris'] = Mpris
+globalThis['Mprisags'] = Mpris
 
 AutomaticDispatch()
 

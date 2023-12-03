@@ -206,9 +206,34 @@ export const AppVolumeMixer = () => Widget.Box({
     ],
     spacing: 10,
     vertical: true,
+    // properties: [
+    //     ["streams", {
+
+    //     }],
+    //     ["add_stream", (self, stream_id) => {
+    //         const stream = Audio.getStream(stream_id)
+    //         self._streams[stream_id] = [
+    //             self._streams.length > 0 ? self._streams.length + 1 : 0 ,
+    //             stream
+    //         ]
+    //         self.children[1].children.push(AppMixer(stream))
+    //     }],
+    //     ["remove_stream", (self, stream_id) => {
+    //         if (self._streams[stream_id] !== undefined) {
+    //             self.children[1].children.splice(self.streams[stream_id][0],1)
+    //             delete self._streams[stream_id]
+    //         }
+    //     }]
+    // ],
     connections: [
-        [Audio, self => {
+        [Audio, (self, _) => {
             self.children[1].children = Audio.apps?.map(AppMixer)
-        }]
+        }, 'stream-added'],
+        [Audio, (self, _) => {
+            self.children[1].children = Audio.apps?.map(AppMixer)
+        }, 'stream-removed']
+    ],
+    binds: [
+        ["visible", Audio, "apps", apps => apps.length > 0]
     ]
 })

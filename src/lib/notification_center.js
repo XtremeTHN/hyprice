@@ -3,6 +3,7 @@ import Widget from "resource:///com/github/Aylur/ags/widget.js"
 import { Box, Separator } from "./misc.js";
 import Notifications, { Notification as Noti } from "resource:///com/github/Aylur/ags/service/notifications.js"
 import { NotificationIcon, Placeholder } from "./notifications.js"
+import { CpuUsage, RamUsage } from "./system.js";
 
 const Header = () => Widget.Box({
     class_name: "notification-center-head",
@@ -131,34 +132,48 @@ const Body = () => Widget.Scrollable({
     ], "list", true, 0)
 })
 
-const Bottom = () => Widget.Button({
-    onClicked: () => Notifications.clear(),
-    binds: [
-        ['sensitive', Notifications, 'notifications', n => n.length > 0],
-    ],
-    child: Widget.CenterBox({
-        spacing: 10,
-        center_widget: Box([
-            Widget.Icon({
-                binds: [
-                    ['icon', Notifications, 'notifications', n =>
-                        `user-trash-${n.length > 0 ? 'full-' : ''}symbolic`],
-                ],
-            }),
-            Widget.Label('Clear'),
-        ]),
-    }),
-});
-
-const Center = () => Widget.Box({
-    class_name: "notification-center-box",
+const Bottom = () => Widget.Box({
     vertical: true,
     spacing: 10,
     children: [
-        Header(),
-        Body(),
-        Bottom()
+        Widget.Button({
+            onClicked: () => Notifications.clear(),
+            binds: [
+                ['sensitive', Notifications, 'notifications', n => n.length > 0],
+            ],
+            child: Widget.CenterBox({
+                spacing: 10,
+                center_widget: Box([
+                    Widget.Icon({
+                        binds: [
+                            ['icon', Notifications, 'notifications', n =>
+                                `user-trash-${n.length > 0 ? 'full-' : ''}symbolic`],
+                        ],
+                    }),
+                    Widget.Label('Clear'),
+                ]),
+            }),
+        })
     ]
 })
+
+
+
+const Center = () => Box([
+    Widget.Box({
+        class_name: "notification-center-box",
+        vertical: true,
+        spacing: 10,
+        children: [
+            Header(),
+            Body(),
+            Bottom()
+        ]
+    }),
+    Box([
+        CpuUsage(), 
+        RamUsage()
+    ], "dashboard-notification-center-box-usage", true, 4)
+], "dashboard-notification-center-box", true, 10)
 
 export default Center;
