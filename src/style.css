@@ -309,6 +309,62 @@ button:active {
     font-weight: 800;
 }
 
+.runner {
+    padding: 10px;
+    border-radius: 16px;
+    background-color: #13161c;
+    min-width: 400px;
+}
+
+.runner-result-box {
+    padding: 10px;
+    border-radius: 16px;
+    background-color: #13161c;
+}
+
+.dashboard-music-controller {
+    min-height: 150px;
+    border-radius: 16px;
+    background-color: #13161c;
+    padding: 10px;
+}
+
+.dashboard-music-background {
+    border-radius: 16px;
+    padding: 10px;
+}
+
+.dashboard-music-info {
+    background-color: rgba(30,30,46,0.9); 
+    border-radius: 14px;
+    padding: 15px;
+}
+
+.dashboard-music-info-bottom {
+    padding: 15px;
+}
+
+.dashboard-music-info-title {
+    font-size: x-large;
+    font-weight: 800;
+}
+
+.dashboard-music-info-artists {
+    font-size: smaller;
+}
+
+.dashboard-music-info-button {
+    background-color: transparent;
+    /* border: 1px solid white; */
+    border-radius: 50px;
+}
+
+.disk-manager {
+    background-color: #13161c;
+    border-radius: 16px;
+    padding: 10px;
+}
+
 progress, trough {
     border-radius: 10px;
     min-height: 10px;

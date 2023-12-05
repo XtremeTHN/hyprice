@@ -1,7 +1,9 @@
 import Variable from "resource:///com/github/Aylur/ags/variable.js";
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import GLib from "gi://GLib";
+import Network from "resource:///com/github/Aylur/ags/service/network.js";
 import { exec } from "resource:///com/github/Aylur/ags/utils.js";
+import Mpris, { MprisPlayer } from "resource:///com/github/Aylur/ags/service/mpris.js";
 
 export const Uptime = Variable(0, {
     poll: [1000, 'uptime -p']
@@ -55,3 +57,14 @@ export const RamPercentage = Variable(0.00, {
         ['fish', '/home/axel/.local/bin/check_ram']
     ]
 })
+
+export const SSID = Variable("Disconnected", {
+    poll: [
+        1000,
+        () => {
+            return Network.primary == "wifi" ? Network.wifi.ssid : Network.wired.state
+        }
+    ]
+})
+
+export const RunnerError = Variable("Unknown error")

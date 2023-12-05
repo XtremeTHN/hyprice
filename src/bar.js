@@ -11,6 +11,8 @@ import BluetoothIndicator from "./lib/bluetooth.js";
 
 import { Dispatch } from './lib/hyprland.js';
 
+import { DiskTray } from "./lib/disk.js";
+
 const WindowTitle = () => Widget.Box({
     class_name: "topbar-windowtitle",
     vertical: true,
@@ -82,6 +84,7 @@ const RightWidgets = () => Widget.Box({
     children: [
         Separator(false),
         Clock(),
+        DiskTray(),
         Box([
             BatteryIndicator(),
             AudioIndicator(),

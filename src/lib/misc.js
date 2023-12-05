@@ -40,18 +40,19 @@ export const truncateTitle = (str) => {
     return str.substring(0, lastDash);
 }
 
-export const Box = (elements=[], className="", vertical=false, spacing=10) => Widget.Box({
-    spacing: spacing,
-    vertical: vertical,
+export const Box = (elements=[], className="", vertical=false, spacing=10, {...rest}={}) => Widget.Box({
+    spacing, 
+    vertical,
     class_name: className,
     children: elements,
+    ...rest
 })
 
 export const Separator = (vertical) => {
     return Widget.Box({vexpand: vertical, hexpand: vertical ? false : true})
 }
 
-class PopupWindow2 extends AgsWindow {
+class AnimatedWindow extends AgsWindow {
     static { GObject.registerClass(this); }
 
     /** @param {import('types/widgets/window').WindowProps & {
@@ -60,11 +61,11 @@ class PopupWindow2 extends AgsWindow {
      *      transition?: import('types/widgets/revealer').RevealerProps['transition']
      *  }} o
      */
-    constructor({ name, child, transition = 'none', visible = false, ...rest }) {
+    constructor({ name, child, transition = 'none', visible = false, popup = true, ...rest }) {
         super({
             ...rest,
             name,
-            popup: true,
+            popup,
             focusable: true,
             class_names: ['popup-window', name],
         });
@@ -102,5 +103,11 @@ class PopupWindow2 extends AgsWindow {
  *  }} config
  */
 export const PopupWindow = (config) => {
-    return new PopupWindow2(config)
+    return new AnimatedWindow(config)
+}
+
+export const RotateWidget = (widget, angle) => {
+    let w = widget
+    w.set_angle(angle)
+    return w
 }

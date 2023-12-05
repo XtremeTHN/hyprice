@@ -18,19 +18,27 @@ export const BluetoothButton = () => Widget.Button({
         spacing: 10,
         children: [
             BluetoothIndicator(),
-            Widget.Label({
-                xalign: 0,
-                hexpand: true,
-                connections: [
-                    [Bluetooth, self => {
-                        if (!Bluetooth.connectedDevices[0]) {
-                            self.label="No device connected"
-                            return
-                        }
-                        self.label = Bluetooth.connectedDevices[0].name
-                    }, "notify::connected-devices"]
-                ]
-            }),
+            Box([
+                Widget.Label({
+                    label: "Bluetooth",
+                    xalign: 0,
+                    css: "font-size: large; font-weight: 800;"
+                }),
+                Widget.Label({
+                    xalign: 0,
+                    hexpand: true,
+                    css: "font-size: smaller;",
+                    connections: [
+                        [Bluetooth, self => {
+                            if (!Bluetooth.connectedDevices[0]) {
+                                self.label="No device connected"
+                                return
+                            }
+                            self.label = Bluetooth.connectedDevices[0].name
+                        }, "notify::connected-devices"]
+                    ]
+                })
+            ], "", true, 0),
             Widget.CircularProgress({
                 connections: [
                     [Bluetooth, self => {

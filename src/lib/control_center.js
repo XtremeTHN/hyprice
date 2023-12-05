@@ -8,8 +8,7 @@ import { AudioSection, AppVolumeMixer } from "./audio.js";
 import { PopupWindow } from "./misc.js";
 
 import Tray from "./tray.js";
-import App from "resource:///com/github/Aylur/ags/app.js";
-import { timeout } from "resource:///com/github/Aylur/ags/utils.js";
+import { MusicController } from './music.js'
 
 export var config = {
     preferredPlayer: 0,
@@ -112,6 +111,7 @@ export const RightDashBoard = () => PopupWindow({
     margins: [0,10,10,0],
     child: Box([
         QuickSettings(),
+        MusicController()
     ], "dashboard-control-center-box", true, 20),
     transition: "slide_down",
 })

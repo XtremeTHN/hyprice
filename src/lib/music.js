@@ -1,9 +1,12 @@
 // @ts-nocheck
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
-import Mpris from "resource:///com/github/Aylur/ags/service/mpris.js";
+import Mpris, { MprisPlayer } from "resource:///com/github/Aylur/ags/service/mpris.js";
 import App from "resource:///com/github/Aylur/ags/app.js";
+import Cava from "./cava.js";
 
-class MusicInfo {
+import { Box } from "./misc.js";
+
+class MusicHandler2 {
     constructor(maxLenght=42) {
         this.busname = ""
         this.maxLenght = maxLenght
@@ -55,13 +58,10 @@ class MusicInfo {
                                 self.visible = true
                             }
                             self.value = player.position / player.length
-                            // print(self.value, player.position, player.length, player.position === player.length)
                         }]
                     ],
                     rounded: true,
                     connections: [
-                        [Mpris.getPlayer(this.busname), s => s._update(s)],
-                        [Mpris.getPlayer(this.busname), s => s._update(s), 'position'],
                         [1000, s => s._update(s)]
                     ]
                 })
@@ -70,87 +70,176 @@ class MusicInfo {
     }
 
     controller() {
+        print(Mpris.getPlayer(this.busname), this.busname)
         return Widget.Box({
+            class_name: "dashboard-music-controller",
+            vertical: true,
             children: [
-                Widget.Box({
-                    vertical: true,
-                    children: [
-                        Widget.Label({class_name: "topbar-musictl-title"}),
-                        Widget.Label({class_name: "topbar-musictl-artist"})
-                    ],
-                    connections: [
-                        [Mpris, self => {
-                            const player = Mpris.getPlayer(this.busname)
-                            if (!player) {
-                                self.children[0].label = "Play some music"
-                                return
-                            }
-        
-                            const { trackArtists, trackTitle } = player
-                            // @ts-ignore
-                            let name = trackTitle.substring(0, this.maxLength)
-                            if (name != "") {
-                                self.children[0].label = `${name}`
-                                self.children[1].label = trackArtists.join(", ")
-                            } else {
-                                self.children[0].label = "No music"
-                            }
-                        }, 'changed']
-                    ]
-                })
+                
             ],
+            connections: [
+                [Mpris.getPlayer(this.busname), self => {
+                    const player = Mpris.getPlayer(this.busname)
+                    print(player.cover_path)
+                    self.css = `background-image: url("${player.cover_path}"); background-size: cover;`
+                }]
+            ]
         })
     }
 }
 
-export const MusicCtl = (content) => Widget.Window({
-    name: "musicctl",
-    visible: false,
-    anchor: ["top"],
-    child: content,
-})
-
+const MusicHandler = new MusicHandler2()
 
 // @ts-ignore
 export const Music = () => {
-    let music_obj = new MusicInfo()
     let box = Widget.EventBox({
         visible: false,
-        child: music_obj.widget("topbar-music-status-box"),
+        child: MusicHandler.widget("topbar-music-status-box"),
         properties: [
             ['change_visible', (self,bus) => {
                 self.visible = Mpris.players.length > 0
-                music_obj.busname = bus
-            }]
+                MusicHandler.busname = bus
+            }],
         ],
+        on_hover: (self, _) => {
+            self.child.toggleClassName("hover", true)
+            self.child.children[1].toggleClassName("hover", true)    
+        },
+        on_hover_lost: (self, _) => {
+            self.child.toggleClassName("hover", false)
+            self.child.children[1].toggleClassName("hover", false)
+        },
         connections: [
             [Mpris, (self, bus) => self._change_visible(self,bus), "player-added"],
             [Mpris, (self, bus) => self._change_visible(self,bus), "player-closed"]
         ]
     })
 
-    box.on_primary_click = () => {
-        App.toggleWindow("musicctl")
-    }
-
-    box.on_hover = () => {
-        // box.child: Widget.Box
-        // box.child.children: 
-        box.child.toggleClassName("hover", true)
-        box.child.children[1].toggleClassName("hover", true)
-
-    }
-    box.on_hover_lost = () => {
-        box.child.toggleClassName("hover", false)
-        box.child.children[1].toggleClassName("hover", false)
-    }
     return box
 
 }
 
+export const MusicController = () => {
+    return Widget.Box({
+        class_name: "dashboard-music-controller",
+        spacing: 10,
+        children: [
+            // Box([
 
-export const MusicController = () => Widget.Window({
-    name: "musiccontroller-window",
-    class_name: "musiccontroller-window",
-    child: MusicCtl
-})
+            // ], "dashboard-music-info", true, 0, {
+            //     hexpand: true, vexpand: true,
+
+            // }),
+            Widget.Overlay({
+                child: Box([], "dashboard-music-background", true, 0, {
+                    connections: [
+                        [Mpris, self => {
+                            const { cover_path } = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                            self.css = `background-image: url("${cover_path}"); background-size: cover;`
+                        }]
+                    ]
+                }),
+                overlays: [
+                    Box([
+                        Widget.Label({
+                            xalign: 0,
+                            class_name: "dashboard-music-info-title",
+                            connections: [
+                                [Mpris, self => {
+                                    const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                                    self.label = player.track_title
+                                }]
+                            ]
+                        }),
+                        Widget.Label({
+                            xalign: 0,
+                            class_name: "dashboard-music-info-artists",
+                            connections: [
+                                [Mpris, self => {
+                                    const { track_artists } = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                                    if (track_artists == undefined) {
+                                        self.label = "Unknown artist"
+                                    } else {
+                                        self.label = track_artists.join(" - ")
+                                    }
+                                }]
+                            ]
+                        })
+                    ], "dashboard-music-info", true, 0, {
+                        hexpand: true, vexpand: true
+                    }),
+                    Box([
+                        Widget.ProgressBar({
+                            hexpand: true,
+                            connections: [
+                                [1000, self => {
+                                    const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                                    if (player == undefined) {
+                                        return
+                                    } else {
+                                        self.value = player.position / player.length
+                                    }
+                                }]
+                            ],
+                        })
+                    ], "dashboard-music-info-bottom", false, 0, {
+                        hexpand: true
+                    })
+                ]
+            }),
+            Box([
+                Widget.Button({
+                    class_name: "dashboard-music-info-button",
+                    child: Widget.Icon("media-skip-backward-symbolic"),
+                    on_clicked: () => {
+                        const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                        if (!player) {
+                            return
+                        }
+                        if (player.can_go_prev) {
+                            player.previous()
+                        }
+                    }
+                }),
+                Widget.Button({
+                    class_name: "dashboard-music-info-button",
+                    child: Widget.Icon({
+                        connections: [
+                            [Mpris, self => {
+                                const { play_back_status } = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                                if (play_back_status == "Playing") {
+                                    self.icon = "media-playback-pause-symbolic"
+                                } else {
+                                    self.icon = "media-playback-start-symbolic"
+                                }
+                            }]
+                        ]
+                    }),
+                    on_clicked: () => {
+                        const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                        if (!player) {
+                            return
+                        }
+                        player.playPause()
+                    }
+                }),
+                Widget.Button({
+                    class_name: "dashboard-music-info-button",
+                    child: Widget.Icon("media-skip-forward-symbolic"),
+                    on_clicked: () => {
+                        const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                        if (!player) {
+                            return
+                        }
+                        if (player.can_go_next) {
+                            player.next()
+                        }
+                    }
+                }),
+            ], "", true, 10, {
+                vexpand: true,
+                vpack: 'center'
+            })
+        ],
+    })
+}

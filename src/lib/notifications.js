@@ -59,6 +59,7 @@ export const Notification = n => {
         child: Widget.Box({
             vertical: true,
             css,
+            spacing: 10,
             children: [
                 Widget.Box({
                     children: [
