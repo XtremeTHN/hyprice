@@ -9,11 +9,31 @@ import { PopupWindow } from "./misc.js";
 
 import Tray from "./tray.js";
 import { MusicController } from './music.js'
+import DiskManager from "./disk.js";
 
 export var config = {
     preferredPlayer: 0,
     preferredSpeaker: 0
 }
+
+const StackButton = (stack, icon, item, is_first=false, is_last=false) => Widget.Button({
+    // if is_first and is_last is false, the button is in the center
+    class_name: `dashboard-control-center-stack-button dashboard-control-center-stack-button-${is_first == false && is_last == false ? 'center' : is_first == true ? 'first' : 'last'}`,
+    hexpand: true,
+    vexpand: false,
+    child: Widget.Icon({
+        icon: icon,
+        size: 16,
+    }),
+    on_primary_click: (self,_) => {
+        stack.shown=item
+    },
+    connections: [
+        [stack, (self, _) => {
+            self.toggleClassName("toggle", stack.shown === item)
+        }, "notify::shown"]
+    ]
+})
 
 export const UserName = () => {
     let user = User.charAt(0).toUpperCase() + User.slice(1)
@@ -39,7 +59,6 @@ export const Section = (name, lbl_class="") => Widget.Box({
 })
 
 export const QuickSettings = () => Widget.Box({
-    class_name: "dashboard-control-center",
     vertical: true,
     spacing: 10,
     children: [
@@ -65,36 +84,8 @@ export const QuickSettings = () => Widget.Box({
         ], "", true, 0),
         NetworkSection(),
         BluetoothButton(),
-        AudioSection(),
-        AppVolumeMixer(),
-        Tray(),
     ]
 })
-
-
-
-// export const LeftDashBoard = () => Widget.Window({
-//     name: "dashboard-left",
-//     class_name: "dashboard-window",
-//     anchor: ['bottom', 'left', 'top'],
-//     margins: [0,10,10,0],
-//     child: Widget.Revealer({
-//         className: `dashboard-window-revealer`,
-//         revealChild: false,
-//         transitionDuration: 500,
-//         transition: 'slide_left',
-//         vexpand: false,
-//         child: Box([
-//             Center()
-//         ]),
-//         connections: [
-//             [App, (self, _, visible) => {
-//                 print(visible)
-//                 self.revealChild = visible
-//             }]
-//         ]
-//     })
-// })
 
 export const LeftDashBoard = () => PopupWindow({
     name: "dashboard-left",
@@ -104,14 +95,39 @@ export const LeftDashBoard = () => PopupWindow({
     transition: "slide_right"
 })
 
-export const RightDashBoard = () => PopupWindow({
-    name: "dashboard-right",
-    class_name: "dashboard-window",
-    anchor: ['right', 'top'],
-    margins: [0,10,10,0],
-    child: Box([
-        QuickSettings(),
-        MusicController()
-    ], "dashboard-control-center-box", true, 20),
-    transition: "slide_down",
-})
+export const RightDashBoard = () => {
+    var stack = Widget.Stack({
+        vexpand: false,
+        items: [
+            ["audio", AudioSection()],
+            ["volume-mixer", AppVolumeMixer()],
+            ["system-tray", Tray()],
+            ["disk-tray", DiskManager()]
+        ],
+        transition: 'slide_left_right',
+    })
+
+    var btts = Box([
+        StackButton(stack, "audio-volume-high-symbolic", "audio"),
+        StackButton(stack, "microphone-sensitivity-high-symbolic", "volume-mixer"),
+        StackButton(stack, "system-run-symbolic", "system-tray"),
+        StackButton(stack, "drive-harddisk-symbolic", "disk-tray"),
+    ], "dashboard-control-center-stack-button-box", false, 0)
+
+    var window = PopupWindow({
+        name: "dashboard-right",
+        class_name: "dashboard-window",
+        anchor: ['right', 'top'],
+        margins: [0,10,10,0],
+        child: Box([
+            Box([
+                QuickSettings(),
+    ,           btts,
+                stack,
+            ], "dashboard-control-center-box", true, 20),
+            MusicController()
+        ], "", true, 10),
+        transition: "slide_down",
+    })
+    return window
+}

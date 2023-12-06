@@ -134,16 +134,20 @@ export const MusicController = () => {
                 child: Box([], "dashboard-music-background", true, 0, {
                     connections: [
                         [Mpris, self => {
-                            const { cover_path } = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
-                            self.css = `background-image: url("${cover_path}"); background-size: cover;`
+                            if (Mpris.players) {
+                                const { cover_path } = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
+                                self.css = `background-image: url("${cover_path}"); background-size: cover;`
+                            }
                         }]
-                    ]
+                    ],
                 }),
                 overlays: [
                     Box([
                         Widget.Label({
                             xalign: 0,
                             class_name: "dashboard-music-info-title",
+                            wrap: true,
+                            truncate: 'end',
                             connections: [
                                 [Mpris, self => {
                                     const player = Mpris.players[Mpris.players.length > 0 ? Mpris.players.length -1 : 0]
@@ -241,5 +245,8 @@ export const MusicController = () => {
                 vpack: 'center'
             })
         ],
+        binds: [
+            ["visible", Mpris, "players", players => players.length > 0]
+        ]
     })
 }

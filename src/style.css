@@ -255,15 +255,11 @@ button:active {
     padding: 10px;
 }
 
-.dashboard-control-center {
+.dashboard-control-center-box {
     background-color: rgb(19,22,28);
     border-radius: 16px;
-    min-width: 300px;
+    min-width: 350px;
     padding: 15px;
-}
-
-.dashboard-control-center-box {
-    min-width: 400px;
 }
 
 .dashboard-control-center-uptime {
@@ -286,17 +282,14 @@ button:active {
     border-radius: 25px;
     background-color: #13161c;
     color: grey;
-    transition: all 1.5s;
+    transition: all 0.5s;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .dashboard-quicksettings-button.toggled {
     background: linear-gradient(to bottom right, #cba6f7, #81D4EE);
     color: black;
-}
-
-.dashboard-quicksettings-network-button {
-    padding-top: 15px;
-    padding-bottom: 15px;
 }
 
 .dashboard-app-mixer-info {
@@ -360,9 +353,30 @@ button:active {
 }
 
 .disk-manager {
-    background-color: #13161c;
-    border-radius: 16px;
     padding: 10px;
+}
+
+.disk-manager-item {
+    padding: 10px;
+    border-radius: 16px;
+    background-color: #1D212A;
+}
+
+.dashboard-control-center-stack-button {
+    border-radius: 16px;
+    background-color: transparent;
+    transition: all 0.5s;
+}
+
+.dashboard-control-center-stack-button.toggle {
+    background: linear-gradient(to bottom right, #A7BDFB, #81D4EE);
+    color: black;
+}
+
+.dashboard-control-center-stack-button-box {
+    background-color: #1D212A;
+    border-radius: 16px;
+
 }
 
 progress, trough {

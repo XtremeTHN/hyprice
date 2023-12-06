@@ -94,11 +94,11 @@ const AudioController = () => Widget.Box({
                     hexpand: true,
                     drawValue: false,
                     on_change: ({ value }) => {
-                        Audio.speakers[config.preferredSpeaker].volume = value
+                        Audio.speaker.volume = value
                     },
                     connections: [
                         [Audio, self => {
-                            self.value = Audio.speakers[config.preferredSpeaker].volume
+                            self.value = Audio.speaker.volume
                         }],
                         
                     ]
@@ -106,7 +106,7 @@ const AudioController = () => Widget.Box({
                 Widget.Label({
                     connections: [
                         [Audio, self => {
-                            self.label = `${Math.round(Audio.speakers[config.preferredSpeaker].volume * 100).toString()}%`
+                            self.label = `${Math.round(Audio.speaker.volume * 100).toString()}%`
                         }]
                     ]
                 })
@@ -169,6 +169,8 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
                 Widget.Label({
                     xalign: 0,
                     hexpand: true,
+                    wrap: true,
+                    truncate: 'end',
                     class_name: "dashboard-app-mixer-title",
                     binds: [
                         ['label', stream, 'description']
@@ -206,25 +208,6 @@ export const AppVolumeMixer = () => Widget.Box({
     ],
     spacing: 10,
     vertical: true,
-    // properties: [
-    //     ["streams", {
-
-    //     }],
-    //     ["add_stream", (self, stream_id) => {
-    //         const stream = Audio.getStream(stream_id)
-    //         self._streams[stream_id] = [
-    //             self._streams.length > 0 ? self._streams.length + 1 : 0 ,
-    //             stream
-    //         ]
-    //         self.children[1].children.push(AppMixer(stream))
-    //     }],
-    //     ["remove_stream", (self, stream_id) => {
-    //         if (self._streams[stream_id] !== undefined) {
-    //             self.children[1].children.splice(self.streams[stream_id][0],1)
-    //             delete self._streams[stream_id]
-    //         }
-    //     }]
-    // ],
     connections: [
         [Audio, (self, _) => {
             self.children[1].children = Audio.apps?.map(AppMixer)
@@ -233,7 +216,7 @@ export const AppVolumeMixer = () => Widget.Box({
             self.children[1].children = Audio.apps?.map(AppMixer)
         }, 'stream-removed']
     ],
-    binds: [
-        ["visible", Audio, "apps", apps => apps.length > 0]
-    ]
+    // binds: [
+    //     ["visible", Audio, "apps", apps => apps.length > 0]
+    // ]
 })

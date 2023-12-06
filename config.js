@@ -6,7 +6,6 @@ import {NotificationsPopupWindow} from './src/lib/notifications.js'
 import { RightDashBoard, LeftDashBoard } from './src/lib/control_center.js'
 import { AutomaticDispatch } from './src/lib/hyprland.js'
 import { Runner } from './src/lib/runner.js'
-import DiskManager from './src/lib/disk.js'
 import { AutomaticMounter } from './src/lib/disk.js'
 
 globalThis['IncreaseAudio'] = IncreaseAudio
@@ -24,7 +23,6 @@ export default {
         LeftDashBoard(),
         RightDashBoard(),
         Runner(),
-        DiskManager()
     ],
     closeWindowDelay: {
         'dashboard-left': 1000,

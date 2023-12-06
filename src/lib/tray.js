@@ -31,9 +31,9 @@ const Tray = () => Widget.Box({
             self.children[1].children = SystemTray.items.map(TrayItem)
         }, "notify::items"]
     ],
-    binds: [
-        ['visible', SystemTray, 'items', i => i.length > 0]
-    ]
+    // binds: [
+    //     ['visible', SystemTray, 'items', i => i.length > 0]
+    // ]
 })
 
 export default Tray;

@@ -14,16 +14,20 @@ const NetworkIcon = () => Widget.Icon({
     ]
 })
 
-const SSIDRevealer = () => Widget.Revealer({
-    reveal_child: false,
-    transition_duration: 2000,
-    transition: "slide_right",
-    child: Widget.Label({
-        binds: [
-            ["label", Network.wifi, "ssid"]
-        ]
-    }),
-})
+const SSIDRevealer = () => {
+    const network_obj = Network.primary === "wifi" ? Network.wifi : Network.wired;
+    const network_prop = Network.primary === "wifi" ? "ssid" : "state"
+    return Widget.Revealer({
+        reveal_child: false,
+        transition_duration: 2000,
+        transition: "slide_right",
+        child: Widget.Label({
+            binds: [
+                ["label", network_obj, network_prop]
+            ]
+        }),
+    })
+}
 
 export const NetworkIndicator = () => {
     let icon = NetworkIcon()
@@ -75,7 +79,7 @@ const NetworkButton = () => Widget.Box({
                     if (Network.primary == "wifi") {
                         self.toggleClassName("toggled", true)
                     } else if (Network.primary == "wired") {
-                        self.toggleClassName("toggled", Network.wired.state === "disabled")
+                        self.toggleClassName("toggled", Network.wired.state !== "disabled" || "failed" || "disconnected")
                     }
                 }, "notify"]
             ],

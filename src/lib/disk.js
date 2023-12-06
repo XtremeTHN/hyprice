@@ -4,7 +4,11 @@ import { PopupWindow } from "./misc.js"
 import { execAsync } from "resource:///com/github/Aylur/ags/utils.js"
 import App from "resource:///com/github/Aylur/ags/app.js"
 
+import { Box } from "./misc.js"
+
 const _Disk = (/** @type {Disk} **/ disk) => Widget.Box({
+    spacing: 10,
+    class_name: "disk-manager-item",
     children: [
         Widget.Icon({
             binds: [
@@ -15,7 +19,14 @@ const _Disk = (/** @type {Disk} **/ disk) => Widget.Box({
             binds: [
                 ["label", disk, "name"]
             ]
-        })
+        }),
+        Box([
+            Widget.Label({
+                connections: [
+                    
+                ]
+            })
+        ])
     ]
 })
 
@@ -25,34 +36,45 @@ const _DiskTrayItem = (/** @type {Disk} **/ disk) => Widget.Box({
             binds: [
                 ["icon", disk, "icon-name"]
             ]
-        }),
+        })
     ]
 })
 
-export const DiskTray = () => Widget.EventBox({
-    child: Widget.Box({
-        connections: [
-            [Disks, self => {
-                self.children = Disks.disks.map(_DiskTrayItem)
-            }]
-        ]
-    }),
-    on_primary_click: () => {
-        App.toggleWindow("disk-manager")
-    }
+export const DiskTray = () => Widget.Box({
+    class_name: "dashboard-disk-tray",
+    spacing: 5,
+    connections: [
+        [Disks, self => {
+            self.children = Disks.disks.map(_DiskTrayItem)
+        }]
+    ]
 })
 
-const DiskManager = () => PopupWindow({
-    name: "disk-manager",
+// const DiskManager = () => Widget.Box({
+//     class_name: "disk-manager",
+//     vertical: true,
+//     spacing: 5,
+//     connections: [
+//         [Disks, self => {
+//             self.children = Disks.disks.map(_Disk)
+//         }]
+//     ]
+// })
+
+const DiskManager = () => Widget.Scrollable({
+    hscroll: 'never',
+    vscroll: 'automatic',
     child: Widget.Box({
         class_name: "disk-manager",
+        spacing: 5,
+        vertical: true,
+        children:[],
         connections: [
             [Disks, self => {
-                self.children = Disks.disks.map(_Disk)
+                self.children =Disks.disks.map(_Disk)
             }]
         ]
     }),
-    transition: 'crossfade',
 })
 
 export const AutomaticMounter = () => Disks.connect("disk-added", (_, disk) => {

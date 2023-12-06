@@ -3,7 +3,6 @@ import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
 import { truncateWindowName, truncateTitle, Box, Separator } from "./lib/misc.js";
 import { Music } from "./lib/music.js";
 // @ts-ignore
-import BatteryIndicator from "./lib/battery.js";
 import { Clock } from "./lib/variables.js";
 import { AudioIndicator } from "./lib/audio.js";
 import { NetworkIndicator } from "./lib/network.js";
@@ -86,7 +85,6 @@ const RightWidgets = () => Widget.Box({
         Clock(),
         DiskTray(),
         Box([
-            BatteryIndicator(),
             AudioIndicator(),
             BluetoothIndicator(),
             NetworkIndicator(),
