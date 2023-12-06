@@ -7,9 +7,11 @@ import { RightDashBoard, LeftDashBoard } from './src/lib/control_center.js'
 import { AutomaticDispatch } from './src/lib/hyprland.js'
 import { Runner } from './src/lib/runner.js'
 import { AutomaticMounter } from './src/lib/disk.js'
+import Disks from "./src/lib/services/disks.js"
 
 globalThis['IncreaseAudio'] = IncreaseAudio
 globalThis['DecreaseAudio'] = DecreaseAudio
+globalThis['Disks'] = Disks
 
 AutomaticDispatch()
 AutomaticMounter()

@@ -80,7 +80,7 @@ const DiskManager = () => Widget.Scrollable({
 export const AutomaticMounter = () => Disks.connect("disk-added", (_, disk) => {
     execAsync(['notify-send',`${disk.name} connected`, "Should mount this device?", "-A", "Yes", "-A", "No"])
         .then(out => {
-            if (Number(out) == 0) {
+            if (out !== "" && Number(out) == 0) {
                 disk.mount((self, res, _) => {
                     if (self.mount_finish(res)) {
                         execAsync(['notify-send', `${disk.name} mounted`, "Device has been mounted"])

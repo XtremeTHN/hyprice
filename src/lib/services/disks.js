@@ -39,7 +39,7 @@ export class DiskInfo extends Service {
 
     constructor(device) {
         super()
-        device.connect("changed", (self, _) => {
+        device.connect("notify", (self, _) => {
             let mnt_obj = self.get_mount()
             if (mnt_obj !== null) {
                 this.#deviceAvailable = true
@@ -141,9 +141,7 @@ export class Disk extends Service {
         this.#vol_uuid=this.#vol?.get_uuid()
         this.#vol_can_mount=this.#vol?.can_mount()
         this.#vol_is_mounted = this.#vol?.get_mount() !== null
-        if (this.#vol?.get_mount() !== null) {
-            this.#vol_info = new DiskInfo(this.#vol)
-        }
+        this.#vol_info = new DiskInfo(this.#vol)
 
         // this.#vol_info = 
         print(this.#vol_name)
@@ -173,10 +171,6 @@ export class Disk extends Service {
                 this.emit("changed")
                 this.#vol_is_mounted = vol.get_mount() !== null
                 this.changed("is_mounted")
-            }
-
-            if (vol.get_mount() === null) {
-                this.#vol_info = null
             }
         })
 
