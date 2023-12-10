@@ -149,7 +149,6 @@ export const MicrophoneController = () => Widget.Box({
 export const AudioSection = () => Widget.Box({
     vertical: true,
     children: [
-        Section("Audio"),
         AudioController(),
         MicrophoneController()
     ]
@@ -201,22 +200,16 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
     ]
 })
 
+
 export const AppVolumeMixer = () => Widget.Box({
-    children: [
-        Section("Application Mixer"),
-        Box([], "",true)
-    ],
     spacing: 10,
     vertical: true,
     connections: [
         [Audio, (self, _) => {
-            self.children[1].children = Audio.apps?.map(AppMixer)
+            self.children = Audio.apps?.map(AppMixer)
         }, 'stream-added'],
         [Audio, (self, _) => {
-            self.children[1].children = Audio.apps?.map(AppMixer)
+            self.children = Audio.apps?.map(AppMixer)
         }, 'stream-removed']
     ],
-    // binds: [
-    //     ["visible", Audio, "apps", apps => apps.length > 0]
-    // ]
 })

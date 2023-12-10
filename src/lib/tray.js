@@ -22,13 +22,9 @@ const Tray = () => Widget.Box({
     vexpand: false,
     vertical: true,
     spacing: 10,
-    children: [
-        Section("System Tray"),
-        Box()
-    ],
     connections: [
         [SystemTray, self => {
-            self.children[1].children = SystemTray.items.map(TrayItem)
+            self.children = SystemTray.items.map(TrayItem)
         }, "notify::items"]
     ],
     // binds: [

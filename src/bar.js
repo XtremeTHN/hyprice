@@ -6,6 +6,7 @@ import { Music } from "./lib/music.js";
 import { Clock } from "./lib/variables.js";
 import { AudioIndicator } from "./lib/audio.js";
 import { NetworkIndicator } from "./lib/network.js";
+import BatteryIndicator from "./lib/battery.js";
 import BluetoothIndicator from "./lib/bluetooth.js";
 
 import { Dispatch } from './lib/hyprland.js';
@@ -84,6 +85,7 @@ const RightWidgets = () => Widget.Box({
         Separator(false),
         Clock(),
         DiskTray(),
+        BatteryIndicator(),
         Box([
             AudioIndicator(),
             BluetoothIndicator(),

@@ -4,6 +4,7 @@ import Service from "resource:///com/github/Aylur/ags/service.js";
 // @ts-ignore
 import Gio from 'gi://Gio';
 import { lookUpIcon } from "resource:///com/github/Aylur/ags/utils.js";
+import Variable from "resource:///com/github/Aylur/ags/variable.js";
 
 
 export class DiskInfo extends Service {
@@ -11,18 +12,19 @@ export class DiskInfo extends Service {
         Service.register(
             this,
             {
-                'total-size': ['int'],
-                'free-size': ['int'],
-                'used-size': ['int'],
-                'mount-point': ['string'],
+                'available': ['boolean'],
             },
             {
-                'available': ['boolean'],
+                'total-size': ['integer'],
+                'free-size': ['integer'],
+                'used-size': ['integer'],
+                'mount-point': ['string'],
             }
         )
     }
 
-    #deviceInfoObj=undefined
+    #deviceVolumeObj=undefined
+    #deviceVariables=[]
     #deviceInfo={
         'total-size': 0,
         'free-size': 0,
@@ -37,29 +39,104 @@ export class DiskInfo extends Service {
         return this.#deviceAvailable
     }
 
+    get total_space() {
+        return this.#deviceInfo["total-size"]
+    }
+
+    get total_space_fraction() {
+        return this.#deviceInfo["total-size"] / 1
+    }
+
+    get free_space() {
+        return this.#deviceInfo["free-size"]
+    }
+
+    get free_space_fraction() {
+        return this.#deviceInfo["free-size"] / 1
+    }
+
+    get used_space() {
+        return this.#deviceInfo["used-size"]
+    }
+
+    get used_space_fraction() {
+        return this.#deviceInfo["used-size"] / 1
+    }
+
+    get mount_point() {
+        return this.#deviceInfo['mount-point']
+    }
+
     constructor(device) {
         super()
-        device.connect("notify", (self, _) => {
-            let mnt_obj = self.get_mount()
+        this.#deviceVolumeObj = device
+        this.#deviceVolumeObj.connect("changed", () => {
+            let mnt_obj = device.get_mount()
             if (mnt_obj !== null) {
                 this.#deviceAvailable = true
-                this.#deviceMountObj = mnt_obj
                 this.changed("available")
-                this.#onMounted()
+                this.#onMounted(mnt_obj)
             }
+        })
+
+        this.#deviceVolumeObj.connect("removed", () => {
+            this.#deviceVariables.forEach((value, _, __) => {
+                value.dispose()
+            })
+
+            this.#deviceVariables=[]
         })
     }
 
-    #onMounted= () => {
-        const activation_path = this.#deviceMountObj.get_activation_root().get_path();
-        this.#deviceInfoObj = Gio.File.new_for_path(activation_path)
+    #onMounted= (mnt_obj) => {
+        const activation_path = mnt_obj.get_activation_root().get_path();
+        const dev_path = this.#deviceVolumeObj.get_identifier("unix-device")
 
-        let query_info = this.#deviceInfoObj.query_filesystem_info('GvfsMountInfo', null)
-        query_info.connect("notify", (self,  _) => {
-            this.#deviceInfo['total-size'] = query_info.get_attribute_as_uint64('total-space')
-            this.#deviceInfo['free-size'] = query_info.get_attribute_as_uint64('free-space')
-            this.emit("changed")
+        this.#deviceVariables.push(...[
+                // Total space
+                Variable(0, {
+                    poll: [
+                        [1000, ['fish', '-c', ['df', activation_path, '|', 'awk', 'NR==2', '{print $2}']]]
+                    ]
+                }),
+
+                // Used space
+                Variable(0, {
+                    poll: [
+                        [1000, ['fish', '-c', ['df', activation_path, '|', 'awk', 'NR==2', '{print $3']]]
+                    ]
+                }),
+
+                // Free space
+                Variable(0, {
+                    poll: [
+                        [1000, ['fish', '-c', ['df', activation_path, '|', 'awk', 'NR==2', '{print $3']]]
+                    ]
+                })
+        ])
+
+        this.#deviceVariables[0].connect("change", (self, _) => {
+            this.#deviceInfo["total-size"] = self.value
         })
+
+        this.#deviceVariables[1].connect("change", (self, _) => {
+            this.#deviceInfo["used-size"] = self.value
+        })
+
+        this.#deviceVariables[2].connect("change", (self, _) => {
+            this.#deviceInfo["free-size"] = self.value
+        })
+
+        // this.#deviceInfoObj = Gio.File.new_for_path(activation_path)
+
+        // let query_info = this.#deviceInfoObj.query_filesystem_info('GvfsMountInfo', null)
+        // query_info.connect("notify", (self,  _) => {
+        //     this.#deviceInfo['total-size'] = query_info.get_attribute_as_uint64('total-space')
+        //     this.#deviceInfo['free-size'] = query_info.get_attribute_as_uint64('free-space')
+        //     this.emit("changed")
+        // })
+
+
     }
 }
 
@@ -121,9 +198,9 @@ export class Disk extends Service {
         return this.#vol_is_mounted
     }
 
-    get info() {
-        return this.#vol_info
-    }
+    // get info() {
+    //     return this.#vol_info
+    // }
 
     constructor(volume) {
         super()
@@ -131,24 +208,27 @@ export class Disk extends Service {
         this.#init()
     }
 
-    #init=() => {
-        this.#vol_icon=this.#vol?.get_symbolic_icon().get_names().filter(name => {
-            if (lookUpIcon(name) !== null) {
-                return true
-            }
+    #geticon=(vol=this.#vol) => {
+        return vol?.get_symbolic_icon().get_names().filter(name => {
+            return lookUpIcon(name) !== null
         })[0]
+    }
+
+    #init=() => {
+        this.#vol_icon=this.#geticon()
+        print(this.#vol_icon)
         this.#vol_name=this.#vol?.get_name()
         this.#vol_uuid=this.#vol?.get_uuid()
         this.#vol_can_mount=this.#vol?.can_mount()
         this.#vol_is_mounted = this.#vol?.get_mount() !== null
-        this.#vol_info = new DiskInfo(this.#vol)
+        // this.#vol_info = new DiskInfo(this.#vol)
 
         // this.#vol_info = 
         print(this.#vol_name)
         
         this.#vol?.connect("changed", (vol) => {
-            if (this.#vol_icon != vol.get_symbolic_icon().get_names()[0]) {
-                this.#vol_icon = vol.get_symbolic_icon().get_names()[0]
+            if (this.#vol_icon != this.#geticon(vol)) {
+                this.#vol_icon = this.#geticon(vol)
                 this.emit("changed")
                 this.changed("icon")
             }
@@ -185,6 +265,14 @@ export class Disk extends Service {
      */
     mount(callback) {
         this.#vol?.mount(null, null, this.#cancellable, callback)
+    }
+
+    /**
+     * 
+     * @param {AsyncReadyCallback} callback 
+     */
+    umount(callback) {
+        this.#vol?.eject_with_operation(0, null, this.#cancellable, callback)
     }
 
     cancell_mount() {

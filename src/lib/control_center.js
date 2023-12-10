@@ -16,15 +16,21 @@ export var config = {
     preferredSpeaker: 0
 }
 
-const StackButton = (stack, icon, item, is_first=false, is_last=false) => Widget.Button({
+const StackButton = (stack, icon, item, name, is_first=false, is_last=false) => Widget.Button({
     // if is_first and is_last is false, the button is in the center
     class_name: `dashboard-control-center-stack-button dashboard-control-center-stack-button-${is_first == false && is_last == false ? 'center' : is_first == true ? 'first' : 'last'}`,
     hexpand: true,
     vexpand: false,
-    child: Widget.Icon({
-        icon: icon,
-        size: 16,
-    }),
+    child: Box([
+        Widget.Icon({
+            icon: icon,
+            size: 16,
+        }),
+        Widget.Label({
+            label: name,
+            class_name: "dashboard-control-center-stack-button-name"
+        })
+    ], "", true, 3),
     on_primary_click: (self,_) => {
         stack.shown=item
     },
@@ -108,10 +114,10 @@ export const RightDashBoard = () => {
     })
 
     var btts = Box([
-        StackButton(stack, "audio-volume-high-symbolic", "audio"),
-        StackButton(stack, "microphone-sensitivity-high-symbolic", "volume-mixer"),
-        StackButton(stack, "system-run-symbolic", "system-tray"),
-        StackButton(stack, "drive-harddisk-symbolic", "disk-tray"),
+        StackButton(stack, "audio-volume-high-symbolic", "audio", "Audio"),
+        StackButton(stack, "microphone-sensitivity-high-symbolic", "volume-mixer", "Mixer"),
+        StackButton(stack, "system-run-symbolic", "system-tray", "Tray"),
+        StackButton(stack, "drive-harddisk-symbolic", "disk-tray", "Disks"),
     ], "dashboard-control-center-stack-button-box", false, 0)
 
     var window = PopupWindow({

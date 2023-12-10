@@ -376,7 +376,11 @@ button:active {
 .dashboard-control-center-stack-button-box {
     background-color: #1D212A;
     border-radius: 16px;
+}
 
+.dashboard-control-center-stack-button-name {
+    font-size: xx-small;
+    font-weight: 600;
 }
 
 progress, trough {

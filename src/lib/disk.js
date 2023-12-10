@@ -10,23 +10,57 @@ const _Disk = (/** @type {Disk} **/ disk) => Widget.Box({
     spacing: 10,
     class_name: "disk-manager-item",
     children: [
-        Widget.Icon({
-            binds: [
-                ["icon", disk, "icon-name"]
-            ]
-        }),
-        Widget.Label({
-            binds: [
-                ["label", disk, "name"]
-            ]
-        }),
         Box([
-            Widget.Label({
-                connections: [
-                    
+            Widget.Icon({
+                binds: [
+                    ["icon", disk, "icon-name"]
                 ]
-            })
-        ])
+            }),
+            Widget.Label({
+                binds: [
+                    ["label", disk, "name"]
+                ]
+            }),
+        ],"", false, 10, {
+            hexpand: true
+        }),
+        Widget.Button({
+            hpack: 'end',
+            connections: [
+                [disk, self => {
+                    print(disk.is_mounted)
+                    if (!disk.is_mounted) {
+                        self.child = Widget.Label("Mount")
+                        self.on_clicked = () => {
+                            disk.mount((self, res, data) => {
+                                if (self.mount_finish(res)) {
+                                    execAsync(['notify-send', `${disk.name} mounted`, "Device has been mounted"])
+                                } else {
+                                    execAsync(['notify-send', `${disk.name} failed to mount`, "Unknown error while mounting device"])
+                                }
+                            })
+                        }
+                    } else {
+                        self.child = Widget.Box({
+                            spacing: 5,
+                            children: [
+                                Widget.Icon("media-eject-symbolic"),
+                                Widget.Label("Umount")
+                            ]
+                        })
+                        self.on_clicked = () => {
+                            disk.umount((self, res, data) => {
+                                if (self.eject_with_operation_finish(res)) {
+                                    execAsync(['notify-send', `${disk.name} ejected`, "Device has been ejected"])
+                                } else {
+                                    execAsync(['notify-send', `${disk.name} failed to eject`, 'Unknown error while ejecting device'])
+                                }
+                            })
+                        }
+                    }
+                }]
+            ]
+        })
     ]
 })
 
