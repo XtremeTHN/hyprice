@@ -106,10 +106,11 @@ const BarContent = () => Widget.CenterBox({
     end_widget: RightWidgets()
 })
 
-export const Bar = () => {
+export const Bar = (monitor) => {
     return Widget.Window({
-        name: "topbar",
+        name: `topbar-${monitor}`,
         class_name: "topbar-window",
+        monitor,
         layer: 'top',
         // @ts-ignore
         margins: [5,5,5,5],

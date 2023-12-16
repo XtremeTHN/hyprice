@@ -250,9 +250,19 @@ button:active {
 }
 
 .notification-center-noti {
-    border: 1px solid #A7BDFB;
+    background-color: #1D212A;
     border-radius: 6px;
     padding: 10px;
+}
+
+.notification-center-noti button {
+    background-color: transparent;
+    transition: 0.5s all;
+}
+
+.notification-center-noti button:hover {
+    background: #81D4EE;
+    color: black;
 }
 
 .dashboard-control-center-box {
