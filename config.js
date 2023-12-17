@@ -44,3 +44,7 @@ execAsync(['hyprctl', 'monitors', '-j'])
         })
     })
     .catch(err => console.error(err))
+
+Hyprland.connect('monitor-added', (_, monitor) => {
+    App.addWindow(Bar(monitor.id))   
+})
