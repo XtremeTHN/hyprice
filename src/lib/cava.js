@@ -10,6 +10,7 @@ const Cava = ({
     smooth = false,
 }) => Widget.DrawingArea({
     className: 'cava',
+    hexpand: true,
     properties: [
         ['cavaVar', Variable([], {
         listen: [

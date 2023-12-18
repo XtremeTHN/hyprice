@@ -9,6 +9,8 @@ import { Runner } from './src/lib/runner.js'
 import { AutomaticMounter } from './src/lib/disk.js'
 import { execAsync } from 'resource:///com/github/Aylur/ags/utils.js'
 
+import Applauncher from "./src/lib/applauncher.js";
+
 globalThis['IncreaseAudio'] = IncreaseAudio
 globalThis['DecreaseAudio'] = DecreaseAudio
 globalThis['Hyprland'] = Hyprland
@@ -28,11 +30,13 @@ export default {
         LeftDashBoard(),
         RightDashBoard(),
         Runner(),
+        Applauncher()
     ],
     closeWindowDelay: {
         'dashboard-left': 1000,
         'dashboard-right': 1000,
         'runner': 1000,
+        'clipboard': 1000,
     },
 }
 

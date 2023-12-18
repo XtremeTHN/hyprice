@@ -393,6 +393,34 @@ button:active {
     font-weight: 600;
 }
 
+/* .application-launcher {
+} */
+
+.application-launcher-box {
+    border-radius: 16px;
+
+    background-color: #13161c;
+    padding: 20px;
+
+    min-height: 200px;
+    min-width: 360px;
+}
+
+.application-launcher-item {
+    background-color: transparent;
+    transition: all 0.3s;
+}
+
+.application-launcher-item:hover {
+    background: linear-gradient(to bottom right, #cba6f7, #81D4EE);
+    color: black;
+}
+
+.application-launcher-item:focus {
+    background: linear-gradient(to bottom right, #cba6f7, #81D4EE);
+    color: black;
+}
+
 progress, trough {
     border-radius: 10px;
     min-height: 10px;
