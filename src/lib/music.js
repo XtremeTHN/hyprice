@@ -13,64 +13,74 @@ class MusicHandler2 {
     }
 
     widget(className) {
-        return Widget.Box({
-            class_name: className,
-            spacing: 5,
-            children: [
-                Widget.Box({
-                    children: [
-                        Widget.Label({class_name:"topbar-music-name"}),
-                    ],
-                    visible: false,
-                    connections: [
-                        [Mpris, self => {
-                            const player = Mpris.getPlayer(this.busname)
-                            // @ts-ignore
-                            self.visible = player
-                            // @ts-ignore
-                            if (!player)
-                                return
-                            // @ts-ignore
-                            let name = []
-                            if (player.trackArtists) {
-                                name.push(player.trackArtists)
-                            }
-                            if (player.trackTitle) {
-                                name.push(player.trackTitle)
-                            }
-                            self.children[0].label = name.join(" - ")
-                        }]
-                    ]
-                }),
-                Widget.CircularProgress({
-                    class_name: "topbar-music-progress",
-                    // child: Widget.Icon({icon: "media-playback-start-symbolic", size: 8}),
-                    // child: Widget.),
-                    properties: [
-                        ['update', self => {
-                            const player = Mpris.getPlayer(this.busname)
-                            if (!player) {
-                                return
-                            }
-                            if (player.length === -1) {
-                                self.visible = false
-                            } else {
-                                self.visible = true
-                            }
-                            self.value = player.position / player.length
-                        }]
-                    ],
-                    rounded: true,
-                    connections: [
-                        [1000, s => s._update(s)]
-                    ]
-                })
-            ]
+        return Widget.Overlay({
+            child: Widget.Box({
+                class_name: className,
+                spacing: 5,
+                children: [
+                    Widget.Box({
+                        children: [
+                            Widget.Label({class_name:"topbar-music-name"}),
+                        ],
+                        visible: false,
+                        connections: [
+                            [Mpris, self => {
+                                const player = Mpris.getPlayer(this.busname)
+                                // @ts-ignore
+                                self.visible = player
+                                // @ts-ignore
+                                if (!player)
+                                    return
+                                // @ts-ignore
+                                let name = []
+                                if (player.trackArtists) {
+                                    name.push(player.trackArtists)
+                                }
+                                if (player.trackTitle) {
+                                    name.push(player.trackTitle)
+                                }
+                                self.children[0].label = name.join(" - ")
+                            }]
+                        ]
+                    }),
+                    Widget.CircularProgress({
+                        class_name: "topbar-music-progress",
+                        // child: Widget.Icon({icon: "media-playback-start-symbolic", size: 8}),
+                        // child: Widget.),
+                        properties: [
+                            ['update', self => {
+                                const player = Mpris.getPlayer(this.busname)
+                                if (!player) {
+                                    return
+                                }
+                                if (player.length === -1) {
+                                    self.visible = false
+                                } else {
+                                    self.visible = true
+                                }
+                                self.value = player.position / player.length
+                            }]
+                        ],
+                        rounded: true,
+                        connections: [
+                            [1000, s => s._update(s)]
+                        ]
+                    })
+                ]
+            }),
+            overlays: [
+                Box([
+                    Cava({
+                        bars: 35,
+                        barHeight: 10
+                    })
+                ], "topbar-music-cava")
+            ],
+            pass_through: false
         })
     }
 
     controller() {
-        print(Mpris.getPlayer(this.busname), this.busname)
         return Widget.Box({
             class_name: "dashboard-music-controller",
             vertical: true,
@@ -80,7 +90,6 @@ class MusicHandler2 {
             connections: [
                 [Mpris.getPlayer(this.busname), self => {
                     const player = Mpris.getPlayer(this.busname)
-                    print(player.cover_path)
                     self.css = `background-image: url("${player.cover_path}"); background-size: cover;`
                 }]
             ]
@@ -124,12 +133,6 @@ export const MusicController = () => {
         class_name: "dashboard-music-controller",
         spacing: 10,
         children: [
-            // Box([
-
-            // ], "dashboard-music-info", true, 0, {
-            //     hexpand: true, vexpand: true,
-
-            // }),
             Widget.Overlay({
                 child: Box([], "dashboard-music-background", true, 0, {
                     connections: [
