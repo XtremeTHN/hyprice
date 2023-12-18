@@ -36,15 +36,13 @@
 .topbar-music-status-box {
     font-size: smaller;
     transition: all 0.5s;
-    border-radius: 6px;
+    background-color: rgba(19,22,28,0.7);
 
     padding: 0px 15px 0px 10px;
 }
 
-.topbar-music-status-box.hover {
-    background: linear-gradient(to bottom right, #A7BDFB, #81D4EE);
-    transition: all 0.5s;
-    color: #13161c;
+.topbar-music-cava {
+    color: #A7BDFB;
 }
 
 .topbar-music-progress {
@@ -54,11 +52,6 @@
     min-height: 20px;
     font-size: 2px;
     transition: all 0.3s;
-}
-
-.topbar-music-progress.hover {
-    color: #13161c;
-    background-color: transparent;
 }
 
 .topbar-workspaces-button-circle {
@@ -420,6 +413,8 @@ button:active {
     background: linear-gradient(to bottom right, #cba6f7, #81D4EE);
     color: black;
 }
+
+
 
 progress, trough {
     border-radius: 10px;
