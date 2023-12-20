@@ -22,6 +22,8 @@ class MusicHandler2 {
                     children: [
                         Widget.Label({
                             class_name:"topbar-music-name",
+                            hpack: 'center',
+                            vpack: 'center'
                         })
                     ],
                     visible: false,
@@ -104,6 +106,10 @@ class MusicHandler2 {
             ovr.set_size_request(width, height)
         })
 
+        cava.set_margin_bottom(3)
+        cava.set_margin_left(8)
+        cava.set_margin_right(8)
+        cava.set_margin_top(3)
 
         return ovr
     }

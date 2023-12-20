@@ -7,7 +7,7 @@
 }
 
 .topbar-box {
-    background-color: rgba(19,22,28,0.8);
+    background-color: rgba(19,22,28,0.9);
     border-radius: 6px;
     padding: 5px;
     padding-left: 10px;
@@ -36,9 +36,10 @@
 .topbar-music-status-box {
     font-size: smaller;
     transition: all 0.5s;
-    background-color: rgba(19,22,28,0.7);
+    background-color: rgba(19,22,28,0.9);;
+    border-radius: 8px;
 
-    padding: 0px 15px 0px 10px;
+    padding: 10px;
 }
 
 .topbar-music-cava {
