@@ -4,8 +4,8 @@ Screenshots:
 
 #### Editing
 Execute ```sh
-npm install
-```
+npm install```
+
 And thats it
 
 #### Installing
