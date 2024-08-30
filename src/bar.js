@@ -1,4 +1,4 @@
-import { Widget } from "resource:///com/github/Aylur/ags/widget.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
 import { truncateWindowName, truncateTitle, Box, Separator } from "./lib/misc.js";
 import { Music } from "./lib/music.js";

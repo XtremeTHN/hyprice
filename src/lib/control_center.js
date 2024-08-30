@@ -1,4 +1,4 @@
-import { Widget } from "resource:///com/github/Aylur/ags/widget.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Center from "./notification_center.js"
 import { Box } from "./misc.js"
 import { Uptime, Daytime, User } from "./variables.js";
