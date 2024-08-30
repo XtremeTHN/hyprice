@@ -11,31 +11,21 @@ const _Disk = (/** @type {Disk} **/ disk) => Widget.Box({
     class_name: "disk-manager-item",
     children: [
         Widget.Icon({
-            binds: [
-                ["icon", disk, "icon-name"]
-            ]
+            icon: disk.bind("icon-name") 
         }),
         Widget.Label({
-            binds: [
-                ["label", disk, "name"]
-            ]
+            label: disk.bind("name")
         }),
         Box([
-            Widget.Label({
-                connections: [
-                    
-                ]
-            })
+            Widget.Label({})
         ])
     ]
 })
 
 const _DiskTrayItem = (/** @type {Disk} **/ disk) => Widget.Box({
     children: [
-        Widget.Icon({
-            binds: [
-                ["icon", disk, "icon-name"]
-            ]
+        Widget.Icon().hook(disk, self => {
+            self.icon = disk.iconName
         })
     ]
 })
@@ -43,11 +33,8 @@ const _DiskTrayItem = (/** @type {Disk} **/ disk) => Widget.Box({
 export const DiskTray = () => Widget.Box({
     class_name: "dashboard-disk-tray",
     spacing: 5,
-    connections: [
-        [Disks, self => {
-            self.children = Disks.disks.map(_DiskTrayItem)
-        }]
-    ]
+}).hook(Disks, self => {
+    self.children = Disks.disks.map(_DiskTrayItem)
 })
 
 // const DiskManager = () => Widget.Box({
@@ -69,11 +56,8 @@ const DiskManager = () => Widget.Scrollable({
         spacing: 5,
         vertical: true,
         children:[],
-        connections: [
-            [Disks, self => {
-                self.children =Disks.disks.map(_Disk)
-            }]
-        ]
+    }).hook(Disks, self => {
+        self.children = Disks.disks.map(_Disk)
     }),
 })
 
