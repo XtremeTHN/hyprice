@@ -61,12 +61,11 @@ class AnimatedWindow extends AgsWindow {
      *      transition?: import('types/widgets/revealer').RevealerProps['transition']
      *  }} o
      */
-    constructor({ name, child, transition = 'none', visible = false, popup = true, ...rest }) {
+    constructor({ name, child, transition = 'none', visible = false, ...rest }) {
         super({
             ...rest,
             name,
-            popup,
-            focusable: true,
+            keymode: "on-demand",
             class_names: ['popup-window', name],
         });
 
@@ -75,10 +74,8 @@ class AnimatedWindow extends AgsWindow {
             transition,
             child,
             transitionDuration: 1000,
-            connections: [[App, (_, wname, visible) => {
-                if (wname === name)
-                    this.revealer.reveal_child = visible;
-            }]],
+        }).hook(App, (_, wname, visible) => {
+            if (wname === name) this.revealer.reveal_child = visible;
         });
 
         this.child = Widget.Box({
