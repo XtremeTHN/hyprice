@@ -27,13 +27,10 @@ const StackButton = (stack, icon, item, is_first=false, is_last=false) => Widget
     }),
     on_primary_click: (self,_) => {
         stack.shown=item
-    },
-    connections: [
-        [stack, (self, _) => {
-            self.toggleClassName("toggle", stack.shown === item)
-        }, "notify::shown"]
-    ]
-})
+    }, 
+}).hook(stack, (self) => {
+    self.toggleClassName("toggle", stack.shown === item)
+}, "notify::shown")
 
 export const UserName = () => {
     let user = User.charAt(0).toUpperCase() + User.slice(1)
@@ -68,16 +65,12 @@ export const QuickSettings = () => Widget.Box({
                     class_name: "dashboard-control-center-uptime",
                     xalign: 0,
                     hexpand: true,
-                    binds: [
-                        ["label", Uptime, "value"]
-                    ]
+                    label: Uptime.bind("value"), 
                 }),
                 Widget.Icon({
                     vpack: 'end',
                     size: 24,
-                    binds: [
-                        ["icon", Daytime, "value"]
-                    ]
+                    icon: Daytime.bind('value'), 
                 })
             ], "", false, 0),
             UserName(),
@@ -98,12 +91,12 @@ export const LeftDashBoard = () => PopupWindow({
 export const RightDashBoard = () => {
     var stack = Widget.Stack({
         vexpand: false,
-        items: [
-            ["audio", AudioSection()],
-            ["volume-mixer", AppVolumeMixer()],
-            ["system-tray", Tray()],
-            ["disk-tray", DiskManager()]
-        ],
+        children: {
+            "audio": AudioSection(),
+            "volume-mixer": AppVolumeMixer(),
+            "system-tray": Tray(),
+            "disk-tray": DiskManager()
+        },
         transition: 'slide_left_right',
     })
 
