@@ -121,13 +121,8 @@ export const Notification = n => {
 const List = () => Widget.Box({
     vertical: true,
     vexpand: true,
-    connections: [[Notifications, self => {
-        self.children = Notifications.notifications
-            .reverse()
-            .map(Notification);
-
-        self.visible = Notifications.notifications.length > 0;
-    }]],
+    children: Notifications.bind("notifications").as(Notification),
+    visible: Notifications.bind("notifications").as(n => n.length > 0),
 });
 
 export const Placeholder = () => Widget.Box({
@@ -135,12 +130,10 @@ export const Placeholder = () => Widget.Box({
     vertical: true,
     vexpand: true,
     vpack: 'center',
+    visible: Notifications.bind('notifications').as(n => n.length === 0),
     children: [
         Widget.Icon('notifications-disabled-symbolic'),
         Widget.Label('Your inbox is empty'),
-    ],
-    binds: [
-        ['visible', Notifications, 'notifications', n => n.length === 0],
     ],
 });
 
@@ -171,8 +164,7 @@ export const PopupList = () => Widget.Box({
     className: 'list',
     css: 'min-width: 1px;', // so it shows up
     vertical: true,
-    binds: [['children', Notifications, 'popups',
-        popups => popups.map(Notification)]],
+    children: Notifications.bind("popups").as(p => p.map(Notification)),
 });
 
 
