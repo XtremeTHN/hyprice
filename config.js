@@ -9,6 +9,10 @@ import { Runner } from './src/lib/runner.js'
 import { AutomaticMounter } from './src/lib/disk.js'
 import Disks from "./src/lib/services/disks.js"
 
+const notifications = Service.import('notifications')
+
+notifications.popupTimeout = 3000
+
 globalThis['IncreaseAudio'] = IncreaseAudio
 globalThis['DecreaseAudio'] = DecreaseAudio
 globalThis['Disks'] = Disks
@@ -16,9 +20,8 @@ globalThis['Disks'] = Disks
 AutomaticDispatch()
 AutomaticMounter()
 
-export default {
+App.config({
     style: App.configDir + '/src/style.css',
-    notificationPopupTimeout: 8000,
     windows: [
         Bar(),
         NotificationsPopupWindow(),
@@ -32,4 +35,4 @@ export default {
         'runner': 1000,
         'disk-manager':1000,
     },
-}
+})

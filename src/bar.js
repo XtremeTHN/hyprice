@@ -19,21 +19,12 @@ const WindowTitle = () => Widget.Box({
         Widget.Label({
             xalign: 0,
             class_name: "topbar-windowtitle-class",
-            connections: [[Hyprland, label => { // Hyprland.active.client
-                // @ts-ignore
-                label.label = Hyprland.active.client._class.length === 0 ? 'Desktop' : Hyprland.active.client._class
-            }]],
+            label: Hyprland.active.bind("client").as(c => c._class.length == 0 ? 'Desktop' : c._class) 
         }),
         Widget.Label({
             xalign: 0,
             class_name: "topbar-windowtitle-title",
-            connections: [
-                [Hyprland, self => {
-                    // @ts-ignore
-                    self.label = truncateWindowName(Hyprland.active.client._title.length === 0 ? `Workspace ${Hyprland.active.workspace.id}` : truncateTitle(Hyprland.active.client._title), 26)
-
-                }]
-            ]
+            label: Hyprland.active.bind("client").as(c => truncateWindowName(c._title.length == 0 ? `Workspace ${Hyprland.active.workspace.id}` : c._title))
         }),
     ]
 })
@@ -48,18 +39,14 @@ const Workspaces = () => Widget.Box({
         child: Widget.Box({class_name:"topbar-workspaces-button-circle"}),
         // @ts-ignore
         onClicked: () => Dispatch(i),
-    })),
-    connections: [
-        [Hyprland, self => self.children.forEach(btn => {
-            const workspaces = Hyprland.workspaces;
-            const current_ws = Hyprland.active.workspace.id;
-            // @ts-ignore
-            btn.visible = workspaces.some(ws => ws.id === btn.id);
-            // @ts-ignore
-            btn.child.toggleClassName('active', current_ws === btn.id);
-        })]
-    ]
-})
+    }))
+}).hook(Hyprland, self => self.children.forEach(btn => {
+    const workspaces = Hyprland.workspaces
+    const current_ws = Hyprland.active.workspace.id
+    
+    btn.visible = workspaces.some(ws => ws.id == btn.id)
+    btn.child.toggleClassName('active', current_ws == btn.id)
+}))
 
 const LeftWidgets = () => Widget.Box({
     spacing: 15,
