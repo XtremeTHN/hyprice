@@ -43,14 +43,14 @@ export const User = exec("whoami")
 export const CpuPercentage = Variable(0.00, {
     poll: [
         1000, 
-        ['fish', '/home/axel/.local/bin/check_cpu']
+        ['fish', `${App.configDir}/scripts/check_cpu`]
     ]
 })
 
 export const RamPercentage = Variable(0.00, {
     poll: [
         1000, 
-        ['fish', '/home/axel/.local/bin/check_ram']
+        ['fish', `${App.configDir}/scripts/check_ram`]
     ]
 })
 

@@ -1,0 +1,11 @@
+#!/bin/fish
+
+# Obtener el uso de la RAM en porcentaje
+set ram_percentage (free | grep Mem | awk '{print ($3/$2)*100}')
+
+# Convertir a un valor entre 0 y 1
+set ram_ratio (math $ram_percentage / 100)
+
+# Imprimir el resultado
+echo "$ram_ratio"
+
