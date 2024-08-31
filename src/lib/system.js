@@ -8,16 +8,11 @@ const UsageWidget = (/** @type {Variable} */ service, /** @type {String} */ labe
         Widget.Label({
             class_name: class_name[0],
             xalign: 0,
-            binds: [
-                // @ts-ignore
-                ["label", service, "value", percentage => `${label}: ${Math.round(percentage * 100)}%`]
-            ]
+            label: service.bind("value").as(p => `${label}: ${Math.round(p * 100)}%`),
         }),
         Widget.ProgressBar({
             class_name: class_name[1],
-            binds: [
-                ['value', service, "value"]
-            ]
+            value: service.bind('value')
         })
     ]
 })
