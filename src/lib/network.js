@@ -7,12 +7,9 @@ import { SSID } from "./variables.js";
 
 const NetworkIcon = () => Widget.Icon({
     size: 16,
-    connections: [
-        [Network, self => {
-            self.icon = Network.primary === "wifi" ? Network.wifi.icon_name : Network.wired.icon_name
-        }, "notify"]
-    ]
-})
+}).hook(Network, self => {
+    self.icon = Network.primary === "wifi" ? Network.wifi.icon_name : Network.wired.icon_name
+}, "notify")
 
 const SSIDRevealer = () => {
     const network_obj = Network.primary === "wifi" ? Network.wifi : Network.wired;
@@ -22,9 +19,7 @@ const SSIDRevealer = () => {
         transition_duration: 2000,
         transition: "slide_right",
         child: Widget.Label({
-            binds: [
-                ["label", network_obj, network_prop]
-            ]
+            label: network_obj.bind(network_prop)
         }),
     })
 }
@@ -66,25 +61,19 @@ const NetworkButton = () => Widget.Box({
                         Widget.Label({
                             css: "font-size: smaller;",
                             xalign: 0,
-                            binds: [
-                                ["label", SSID, "value"]
-                            ]
+                            label: SSID.bind('value')
                         })
                     ], "", true, 0)
 
                 ]
             }),
-            connections: [
-                [Network, self => {
-                    if (Network.primary == "wifi") {
-                        self.toggleClassName("toggled", true)
-                    } else if (Network.primary == "wired") {
-                        self.toggleClassName("toggled", Network.wired.state !== "disabled" || "failed" || "disconnected")
-                    }
-                }, "notify"]
-            ],
-
-        }),
+        }).hook(Network, self => {
+            if (Network.primary == "wifi") {
+                self.toggleClassName("toggled", true)
+            } else if (Network.primary == "wired") {
+                self.toggleClassName("toggled", Network.wired.state !== "disabled" || "failed" || "disconnected")
+            }
+        }, "notify"),
     ]
 })
 
