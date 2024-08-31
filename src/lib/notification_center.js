@@ -21,9 +21,7 @@ const Header = () => Widget.Box({
                 Widget.Label({
                     class_name: "notification-center-head-body",
                     xalign: 0,
-                    binds: [
-                        ["label", Notifications, "notifications", notis => `You have ${notis.length} notifications`]
-                    ]
+                    label: Notifications.bind("notifications").as(notis => `You have ${notis.length} notifications`) 
                 })
             ]
         }),
@@ -31,11 +29,9 @@ const Header = () => Widget.Box({
             vpack: 'center',
             hexpand: false,
             vexpand: false,
-            connections: [
-                ['notify::active', ({ active }) => {
-                    Notifications.dnd = active
-                }]
-            ]
+            onActivate: ({ active }) => {
+                Notifications.dnd = active
+            }
         })
     ]
 })
@@ -112,15 +108,11 @@ const List = () => Widget.Box({
     vertical: true,
     vexpand: true,
     spacing: 10,
-    connections: [
-        [Notifications, self => {
-            self.children = Notifications.notifications.reverse()
-                .map(Notification)
+}).hook(Notifications, self => {
+    self.children = Notifications.notifications.reverse()
+        .map(Notification)
             
-            self.visible = Notifications.notifications.length > 0;
-
-        }]
-    ]
+    self.visible = Notifications.notifications.length > 0;
 })
 
 const Body = () => Widget.Scrollable({
@@ -138,17 +130,12 @@ const Bottom = () => Widget.Box({
     children: [
         Widget.Button({
             onClicked: () => Notifications.clear(),
-            binds: [
-                ['sensitive', Notifications, 'notifications', n => n.length > 0],
-            ],
+            sensitive: Notifications.bind("notifications", n => n.length > 0),
             child: Widget.CenterBox({
                 spacing: 10,
                 center_widget: Box([
                     Widget.Icon({
-                        binds: [
-                            ['icon', Notifications, 'notifications', n =>
-                                `user-trash-${n.length > 0 ? 'full-' : ''}symbolic`],
-                        ],
+                        icon: Notifications.bind("notifications").as(n => `user-trash-${n.length > 0 ? "full-" : ""}symbolic`)
                     }),
                     Widget.Label('Clear'),
                 ]),
