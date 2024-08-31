@@ -7,7 +7,7 @@ import { Section } from './control_center.js';
 
 const BluetoothIndicator = () => Widget.Icon({
     size: 14,
-    icon: Bluetooth.bind('enabled').ass(e => e ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic")
+    icon: Bluetooth.bind('enabled').as(e => e ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic")
 })
 
 export const BluetoothButton = () => Widget.Button({
