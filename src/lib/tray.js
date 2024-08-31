@@ -7,13 +7,9 @@ import { Box } from "./misc.js";
 const TrayItem = item => Widget.Button({
     class_name: "dashboard-system-tray-application",
     child: Widget.Icon({
-        binds: [
-            ['icon', item, 'icon']
-        ]
+        icon: item.bind('icon')
     }),
-    binds: [
-        ['tooltip-markup', item, 'tooltip-markup']
-    ],
+    "tooltip-markup": item.bind('tooltip-markup'),
     on_primary_click: (_, event) => item.activate(event),
     on_secondary_click: (_, event) => item.openMenu(event)
 })
@@ -23,14 +19,11 @@ const Tray = () => Widget.Box({
     vertical: true,
     spacing: 10,
     children: [
-        Section("System Tray"),
+        Section("System Tray").hook(SystemTray, self => {
+            self.children = SystemTray.items.map(TrayItem)
+        }, "notify::items"),
         Box()
-    ],
-    connections: [
-        [SystemTray, self => {
-            self.children[1].children = SystemTray.items.map(TrayItem)
-        }, "notify::items"]
-    ],
+    ]
     // binds: [
     //     ['visible', SystemTray, 'items', i => i.length > 0]
     // ]
