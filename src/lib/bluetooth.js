@@ -7,9 +7,7 @@ import { Section } from './control_center.js';
 
 const BluetoothIndicator = () => Widget.Icon({
     size: 14,
-    binds: [
-        ['icon', Bluetooth, 'enabled', bool => bool ? "bluetooth-active-symbolic":"bluetooth-disabled-symbolic"]
-    ]
+    icon: Bluetooth.bind('enabled').ass(e => e ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic")
 })
 
 export const BluetoothButton = () => Widget.Button({
@@ -27,37 +25,26 @@ export const BluetoothButton = () => Widget.Button({
                 Widget.Label({
                     xalign: 0,
                     hexpand: true,
-                    css: "font-size: smaller;",
-                    connections: [
-                        [Bluetooth, self => {
-                            if (!Bluetooth.connectedDevices[0]) {
-                                self.label="No device connected"
-                                return
-                            }
-                            self.label = Bluetooth.connectedDevices[0].name
-                        }, "notify::connected-devices"]
-                    ]
+                    css: "font-size: smaller;"
+                }).hook(Bluetooth, self => {
+                    if (!Bluetooth.connectedDevices[0]) {
+                        self.label="No device connected"
+                        return
+                    }
+                    self.label = Bluetooth.connectedDevices[0].name
                 })
             ], "", true, 0),
-            Widget.CircularProgress({
-                connections: [
-                    [Bluetooth, self => {
-                        if (!Bluetooth.connectedDevices[0]) {
-                            self.value=0
-                            return
-                        }
-                        self.value = Bluetooth.connectedDevices[0]['battery-level']
-                    }]
-                ]
+            Widget.CircularProgress().hook(Bluetooth, self => {
+                if (!Bluetooth.connectedDevices[0]) {
+                    self.value=0
+                    return
+                }
+                self.value = Bluetooth.connectedDevices[0]['battery-level']
             })
         ]
-    }),
-    connections: [
-        [Bluetooth, self => {
-            self.toggleClassName("active", Bluetooth.connectedDevices !== undefined)
-        }]
-    ]
-    
+    })    
+}).hook(Bluetooth, self => {
+    self.toggleClassName("active", Bluetooth.connectedDevices !== undefined)
 })
 // const Device = (d) => Widget.Box({
 //     class_name: "dashboard-quicksettings-bluetooth-device",
