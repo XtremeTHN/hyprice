@@ -38,39 +38,31 @@ const _microphone_icon = () => {
 
 const MicrophoneIcon = (size=8) => Widget.Icon({
     size: size,
-    connections: [
-        [Audio, self => {
-            const vol = Audio.microphone?.volume * 100
-            self.icon = _microphone_icon()
+}).hook(Audio, self => {
+    const vol = Audio.microphone?.volume * 100
+    self.icon = _microphone_icon()
 
-            self.tooltip_text = `Volume ${Math.floor(vol)}%`;
-        }, 'microphone-changed']
-    ]
-})
+    self.tooltip_text = `Volume ${Math.floor(vol)}%`;
+}, "microphone-changed")
 
 const AudioIcon = (size=8) => Widget.Icon({
     size: size,
-    connections: [[Audio, self => {
-        if (!Audio.speaker)
-            return;
+}).hook(Audio, self => {
+    if (!Audio.speaker)
+        return;
 
-        const vol = Audio.speaker?.volume * 100;
+    const vol = Audio.speaker.volume * 100;
 
-        // @ts-ignore
-        self.icon = _audio_icon()
+    // @ts-ignore
+    self.icon = _audio_icon()
         
-        self.tooltip_text = `Volume ${Math.floor(vol)}%`;
-    }, 'speaker-changed']],
-})
+    self.tooltip_text = `Volume ${Math.floor(vol)}%`;
+},"speaker-changed")
 
 export const AudioIndicator = () => Widget.CircularProgress({
     class_name: "topbar-widgets-right-control-audio",
     child: AudioIcon(),
-    connections: [
-        [Audio, self => {
-            self.value = Audio.speaker?.volume
-        }]
-    ]
+    value: Audio.speaker.bind("volume")
 })
 
 export const IncreaseAudio = () => {
@@ -93,22 +85,13 @@ const AudioController = () => Widget.Box({
                 Widget.Slider({
                     hexpand: true,
                     drawValue: false,
+                    value: Audio.speaker?.bind("volume"),
                     on_change: ({ value }) => {
                         Audio.speaker.volume = value
                     },
-                    connections: [
-                        [Audio, self => {
-                            self.value = Audio.speaker.volume
-                        }],
-                        
-                    ]
                 }),
                 Widget.Label({
-                    connections: [
-                        [Audio, self => {
-                            self.label = `${Math.round(Audio.speaker.volume * 100).toString()}%`
-                        }]
-                    ]
+                    label: Audio.speaker.bind("volume").as(v => `${Math.round(Audio.speaker.volume * 100).toString()}%`)
                 })
             ]
         })
@@ -127,19 +110,10 @@ export const MicrophoneController = () => Widget.Box({
                     on_change: ({ value }) => {
                         Audio.microphone.volume = value
                     },
-                    connections: [
-                        [Audio, self => {
-                            self.value = Audio.microphone?.volume
-                        }],
-                        
-                    ]
+                    value: Audio.microphone?.bind("volume")
                 }),
                 Widget.Label({
-                    connections: [
-                        [Audio, self => {
-                            self.label = `${Math.round(Audio.microphone?.volume * 100).toString()}%`
-                        }]
-                    ]
+                    label: Audio.speaker.bind("volume").as(v => `${Math.round(Audio.microphone?.volume * 100).toString()}%`)
                 })
             ]
         })
@@ -160,9 +134,7 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
         Widget.Icon({
             vexpand: true,
             size: 40,
-            binds: [
-                ["icon", stream, "icon-name"]
-            ]
+            icon: stream.bind("icon-name")
         }),
         Box([
             Box([
@@ -172,17 +144,11 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
                     wrap: true,
                     truncate: 'end',
                     class_name: "dashboard-app-mixer-title",
-                    binds: [
-                        ['label', stream, 'description']
-                    ]
+                    label: stream.bind("description")
                 }),
                 Widget.Label({
                     class_name: "dashboard-app-mixer-percentage",
-                    connections: [
-                        [stream, self => {
-                            self.label = `${Math.floor(stream.volume * 100)}%`
-                        }]
-                    ]
+                    label: stream.bind("volume").as(v => `${Math.floor(stream.volume * 100)}%`)
                 }),
             ], "dashboard-app-mixer-info"),
             Widget.Slider({
@@ -191,11 +157,7 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
                 on_change: ({ value }) => {
                     stream.volume = value
                 },
-                connections: [
-                    [stream, self => {
-                        self.value = stream.volume
-                    }],
-                ]
+                value: stream.bind("volume")
             }),
         ], "", true, 0)
     ]
@@ -203,20 +165,15 @@ const AppMixer = (/** @type {Stream} */ stream) => Widget.Box({
 
 export const AppVolumeMixer = () => Widget.Box({
     children: [
-        Section("Application Mixer"),
+        Section("Application Mixer")
+            .hook(Audio, self => {
+                self.children = Audio.apps?.map(AppMixer)
+            }, "stream-added")
+            .hook(Audio, self => {
+                self.children = Audio.apps?.map(AppMixer)
+            }, "stream-removed"),
         Box([], "",true)
     ],
     spacing: 10,
     vertical: true,
-    connections: [
-        [Audio, (self, _) => {
-            self.children[1].children = Audio.apps?.map(AppMixer)
-        }, 'stream-added'],
-        [Audio, (self, _) => {
-            self.children[1].children = Audio.apps?.map(AppMixer)
-        }, 'stream-removed']
-    ],
-    // binds: [
-    //     ["visible", Audio, "apps", apps => apps.length > 0]
-    // ]
 })

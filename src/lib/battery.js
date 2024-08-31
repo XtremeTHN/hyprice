@@ -4,11 +4,11 @@ import { SendNotification } from './notifications.js';
 
 const BatteryIndicator = () => Widget.CircularProgress({
     class_name: 'topbar-widgets-right-control-battery',
+    value: Battery.bind('percent').as(p => p > 0 ? p / 100 : 0),
+    tooltip_text: Battery.bind("percent").as(p => `${(p > 0 ? p / 100 : 0) * 100}%`),
     child: Widget.Icon({
         size: 8,
-        binds: [
-            ["icon", Battery, "icon-name"]
-        ]
+        icon: Battery.bind("icon-name") 
     }),
     binds: [
         // @ts-ignore
@@ -17,6 +17,9 @@ const BatteryIndicator = () => Widget.CircularProgress({
         ['tooltip_text', Battery, 'percent', p => `${(p > 0 ? p / 100 : 0) *100}%`],
         ['class_name', Battery, 'charging', c => c ? 'topbar-widgets-right-control-battery-charging' : 'topbar-widgets-right-control-battery'],
     ],
+}).hook(Battery, self => {
+    if (Battery.charging)
+        self.toggleClassName("charging");
 });
 
 // var already_notified = false

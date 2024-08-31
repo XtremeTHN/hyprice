@@ -80,7 +80,7 @@
     min-height: 20px;
 }
 
-.topbar-widgets-right-control-battery-charging {
+.topbar-widgets-right-control-battery.charging {
     color: #89E19C;
     font-size: 2px;
     min-width: 20px;

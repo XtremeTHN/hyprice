@@ -35,11 +35,7 @@ export const Daytime = Variable("weather-few-clouds-symbolic", {
 
 export const Clock = () => Widget.Label({
     class_name: "topbar-widgets-left-clock",
-    connections: [
-        [1000, self => {
-            self.label = Time.getValue()
-        }]
-    ]
+    label: Time.bind('value')
 })
 
 export const User = exec("whoami")
