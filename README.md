@@ -1,4 +1,5 @@
 # AGS Powered Hyprland rice
+![Alt MainScreenshot](https://raw.githubusercontent.com/XtremeTHN/hyprice/main/assets/2024-08-31-24-10h-38m-13s-Screenshot.png)
 
 Screenshots:
 ![Alt Screenshot1](https://raw.githubusercontent.com/XtremeTHN/hyprice/main/assets/2023-12-31-23-18h-54m-31s-Screenshot.png)
